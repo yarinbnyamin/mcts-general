@@ -35,7 +35,7 @@ class RandomStrategy(PlayerPolicy):
 
     def __call__(self, state):
         actions = self.game.get_possible_actions(state, self.player)
-        return actions[random.randint(0, len(actions)-1)]
+        return actions[random.randint(0, len(actions) - 1)]
 
     def get_player(self) -> int:
         return self.player

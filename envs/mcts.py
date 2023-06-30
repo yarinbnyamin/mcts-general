@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 
-import gaming
+import envs.gaming as gaming
 
 
 class UcbNode:
@@ -23,7 +23,7 @@ class UcbNode:
     def get_score(self):
         # Upper-confidence bound (UCT)
         base = (self.reward + 1) / (self.n_sim + 1)
-        exp = math.sqrt(math.log(self.parent.n_sim+1, math.e)/(self.n_sim+1))
+        exp = math.sqrt(math.log(self.parent.n_sim + 1, math.e) / (self.n_sim + 1))
         return base + self.c * exp
 
     def select_child(self):
@@ -63,7 +63,9 @@ class MCTS(gaming.PlayerPolicy):
 
                 for adversary in range(1, self.game.get_player_count()):
                     if adversary != self.player:
-                        ssrd = self.perform_action(current_node, current_state, adversary)
+                        ssrd = self.perform_action(
+                            current_node, current_state, adversary
+                        )
                         current_node, current_state, reward, done = ssrd
 
                         reward = reward * -1

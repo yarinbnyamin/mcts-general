@@ -1,7 +1,7 @@
 import numpy as np
 
-import gaming
-import mcts
+import envs.gaming as gaming
+import envs.mcts as mcts
 
 
 class CheckersGame(gaming.Game):
@@ -21,8 +21,16 @@ class CheckersGame(gaming.Game):
                 for direction in [-1, 1]:
                     action = [(pos_x, pos_y)]
                     for shift in range(1, max_shift):
-                        move_x, move_y = pos_x+shift*base_dir, pos_y+direction*shift
-                        if move_x >= size_x or move_y >= size_y or move_x < 0 or move_y < 0:
+                        move_x, move_y = (
+                            pos_x + shift * base_dir,
+                            pos_y + direction * shift,
+                        )
+                        if (
+                            move_x >= size_x
+                            or move_y >= size_y
+                            or move_x < 0
+                            or move_y < 0
+                        ):
                             break
                         elif state[move_x, move_y] // 10 == player:
                             break
@@ -37,8 +45,13 @@ class CheckersGame(gaming.Game):
                     for dir_y in [-1, 1]:
                         action = [(pos_x, pos_y)]
                         for shift in range(1, max_shift):
-                            move_x, move_y = pos_x+dir_x*shift, pos_y+dir_y
-                            if move_x >= size_x or move_y >= size_y or move_x < 0 or move_y < 0:
+                            move_x, move_y = pos_x + dir_x * shift, pos_y + dir_y
+                            if (
+                                move_x >= size_x
+                                or move_y >= size_y
+                                or move_x < 0
+                                or move_y < 0
+                            ):
                                 break
                             elif state[move_x, move_y] // 10 == player:
                                 break
@@ -79,7 +92,7 @@ class CheckersGame(gaming.Game):
             for j in range(0, self.size_x, 2):
                 initial_state[i, j + i % 2] = 10
 
-        for i in range(self.size_y-3, self.size_y):
+        for i in range(self.size_y - 3, self.size_y):
             for j in range(0, self.size_x, 2):
                 initial_state[i, j + i % 2] = 20
 
@@ -101,7 +114,9 @@ def test_play():
 
     state, rewards, turn, log = gaming.play_game(ttt, [s1, s2], max_turns=100)
     print()
-    print(f'the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}')
+    print(
+        f"the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}"
+    )
     print(state)
     print(log)
 
@@ -191,7 +206,7 @@ def test_win():
     board = np.zeros((8, 8), dtype=np.byte)
     board[0, 0] = 10
     res = ttt.get_winner(board)
-    assert(res == 1)
+    assert res == 1
     board[1, 1] = 20
     res = ttt.get_winner(board)
-    assert (res == -1)
+    assert res == -1

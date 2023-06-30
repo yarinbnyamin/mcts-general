@@ -1,8 +1,8 @@
 import warnings
 import gym
 
-import gaming
-from mcts import MCTS
+import envs.gaming as gaming
+from envs.mcts import MCTS
 
 
 class GymGame(gaming.Game):
@@ -17,7 +17,8 @@ class GymGame(gaming.Game):
 
         if self.render:
             from gym.wrappers import RecordVideo
-            env = RecordVideo(env, video_folder='.')
+
+            env = RecordVideo(env, video_folder="videos/")
 
         env.seed(1)
         state = env.reset()
@@ -50,7 +51,9 @@ class GymGame(gaming.Game):
         for a in actions:
             state, reward, done, _ = env.step(a)
             if done:
-                raise Exception('cloning environment which is considered done for current action list')
+                raise Exception(
+                    "cloning environment which is considered done for current action list"
+                )
         return env, state, actions
 
 
@@ -60,17 +63,19 @@ class GymNStepsGame(GymGame):
 
     def get_result_state(self, state, action, player):
         state, reward, done = super().get_result_state(state, action, player)
-        reward = -10 if done else 0  # aggressive penalty for loss to reduce exploration level
+        reward = (
+            -10 if done else 0
+        )  # aggressive penalty for loss to reduce exploration level
         return state, reward, done
 
 
 def test_play():
-    ttt = GymNStepsGame('CartPole-v1')
+    ttt = GymNStepsGame("CartPole-v1")
     s1 = MCTS(ttt, n_plays=50, max_depth=30, player=1)
 
-    ttt_play = GymNStepsGame('CartPole-v1')
+    ttt_play = GymNStepsGame("CartPole-v1")
     state, rewards, steps, log = gaming.play_game(ttt_play, [s1], max_turns=50)
     print()
-    print(f'steps: {steps}')
+    print(f"steps: {steps}")
     print(rewards)
     print([a for p, a in log])

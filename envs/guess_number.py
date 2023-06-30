@@ -1,17 +1,17 @@
 import numpy as np
 
-import gaming
-from mcts import MCTS
+import envs.gaming as gaming
+from envs.mcts import MCTS
 
 
 class GuessNumber(gaming.Game):
     def __init__(self, max_number=10, n_players=1):
         self.max_number = max_number
         self.n_players = n_players
-        self.target = int(np.random.random()*max_number)+1
+        self.target = int(np.random.random() * max_number) + 1
 
     def get_possible_actions(self, state, player):
-        return list(range(1, self.max_number+1))
+        return list(range(1, self.max_number + 1))
 
     def get_result_state(self, state, action, player):
         state = state.copy()
@@ -30,7 +30,7 @@ class GuessNumber(gaming.Game):
         return self.n_players
 
     def get_initial_state(self):
-        return dict((p, None) for p in range(1, self.n_players+1))
+        return dict((p, None) for p in range(1, self.n_players + 1))
 
     def get_winner(self, state) -> int:
         for player, state in state.items():
@@ -46,7 +46,9 @@ def test_mcts_play():
 
     state, rewards, turn, log = gaming.play_game(ttt, [s1, s2], max_turns=50)
     print()
-    print(f'the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}')
+    print(
+        f"the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}"
+    )
     print(state)
     print(log)
 
@@ -57,6 +59,8 @@ def test_mcts_play_1player():
 
     state, rewards, turn, log = gaming.play_game(ttt, [s1], max_turns=50)
     print()
-    print(f'the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}')
+    print(
+        f"the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}"
+    )
     print(state)
     print(log)

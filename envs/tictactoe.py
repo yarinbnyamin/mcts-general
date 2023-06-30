@@ -1,7 +1,7 @@
 import numpy as np
 
-import mcts
-import gaming
+import envs.mcts as mcts
+import envs.gaming as gaming
 
 
 class TicTacToeGame(gaming.Game):
@@ -40,8 +40,11 @@ class TicTacToeGame(gaming.Game):
                 continue
 
             for i, j in zip(range(len(line)), range(self.len_to_win, len(line) + 1)):
-                for player in range(1, self.n_players+1):
-                    if sum(line[i:j] == np.full(self.len_to_win, player)) >= self.len_to_win:
+                for player in range(1, self.n_players + 1):
+                    if (
+                        sum(line[i:j] == np.full(self.len_to_win, player))
+                        >= self.len_to_win
+                    ):
                         return player
 
         if np.sum(state == 0) == 0:
@@ -57,13 +60,17 @@ def test_play():
 
     state, rewards, turn, log = gaming.play_game(ttt, [s1, s2], max_turns=50)
     print()
-    print(f'the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}')
+    print(
+        f"the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}"
+    )
     print(state)
     print(log)
 
     state, rewards, turn, log = gaming.play_game(ttt, [s1, s2], max_turns=50)
     print()
-    print(f'the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}')
+    print(
+        f"the winner is the player {[p for p, r in rewards.items() if r == 1]}, turn: {turn}"
+    )
     print(state)
     print(log)
 
@@ -81,7 +88,7 @@ def test_in_progress():
     ttt = TicTacToeGame(size_x=3, size_y=3, len_to_win=3, n_players=2)
     board = np.zeros((3, 3), dtype=np.byte)
     winner = ttt.get_winner(board)
-    assert(winner == -1)
+    assert winner == -1
 
 
 def test_draw():
@@ -95,7 +102,7 @@ def test_draw():
     print()
     print(board)
     winner = ttt.get_winner(board)
-    assert (winner == 0)
+    assert winner == 0
 
 
 def test_win():
@@ -107,7 +114,7 @@ def test_win():
     print()
     print(board)
     winner = ttt.get_winner(board)
-    assert (winner == 1)
+    assert winner == 1
 
 
 def test_win_diag():
@@ -119,4 +126,4 @@ def test_win_diag():
     board[0, 1] = 2
     board[0, 2] = 2
     winner = ttt.get_winner(board)
-    assert(winner == 1)
+    assert winner == 1
