@@ -1,7 +1,7 @@
+This project is forked from [dllllb/imaginarium](https://github.com/dllllb/imaginarium) and focus on Monte-Carlo Tree Search for board games and for the deterministic OpenAI Gym environments.
+
 <p align="center">
-  <img src="cartpole-mcts-demo.gif" />
+  <img src="cartpole-mcts-demo.gif" width="300" />
 </p>
 
-Monte-Carlo Tree Search for board games and for the deterministic OpenAI Gym environments.
-
-The initial plans included experiments where MCTS is applied to the learned *world model* instead of the actual environment. The publication of *MuZero* algorithm made them obsolete.
+To improve the MCTS algorithm (envs/mcts.py) change the function get_score (in line 23) to calculate differently the importance of each node. See envs/arcane_mcts.py for reference - adding a Regression Decision Tree as a heuristic.
