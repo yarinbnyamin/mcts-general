@@ -50,10 +50,10 @@ class MCTS(gaming.PlayerPolicy):
     def __call__(self, root_state):
         root = UcbNode(None, None)
 
-        for i in range(self.n_plays):
+        for _ in range(self.n_plays):
             current_node = root
             current_state = self.game.clone(root_state)
-            for j in range(self.max_depth):
+            for _ in range(self.max_depth):
                 ssrd = self.perform_action(current_node, current_state, self.player)
                 current_node, current_state, reward, done = ssrd
 
@@ -61,7 +61,7 @@ class MCTS(gaming.PlayerPolicy):
                 if done:
                     break
 
-                for adversary in range(1, self.game.get_player_count()):
+                for adversary in range(1, self.game.get_player_count() + 1):
                     if adversary != self.player:
                         ssrd = self.perform_action(
                             current_node, current_state, adversary
