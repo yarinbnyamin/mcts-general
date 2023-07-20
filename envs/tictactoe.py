@@ -5,10 +5,10 @@ import envs.gaming as gaming
 
 
 class TicTacToeGame(gaming.Game):
-    def __init__(self, size_x: int, size_y: int, len_to_win: int, n_players: int):
-        self.size_x = size_x
-        self.size_y = size_y
-        self.len_to_win = len_to_win
+    def __init__(self, size: int, n_players: int):
+        self.size_x = size
+        self.size_y = size
+        self.len_to_win = size
         self.n_players = n_players
 
     def get_possible_actions(self, state, player):
@@ -19,7 +19,7 @@ class TicTacToeGame(gaming.Game):
         new_state[action] = player
 
         winner = self.get_winner(new_state)
-        return new_state, winner == player, winner != -1
+        return new_state, int(winner == player), winner != -1
 
     def get_player_count(self):
         return self.n_players
