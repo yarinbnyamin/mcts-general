@@ -24,7 +24,7 @@ class UcbNode:
         self.children.append(child)
 
     def get_score(self, regressor):
-        """Upper-confidence bound (UCT) + heuristic"""
+        """Using regressor as heuristic"""
 
         try:
             X = np.array([self.state]).reshape(1, -1)
@@ -32,9 +32,7 @@ class UcbNode:
         except:
             heuristic = 0
 
-        base = (self.reward + 1) / (self.n_sim + 1)
-        exp = math.sqrt(math.log(self.parent.n_sim + 1, math.e) / (self.n_sim + 1))
-        return heuristic + base + self.c * exp
+        return heuristic
 
     def select_child(self, regressor):
         ucts = np.array([e.get_score(regressor) for e in self.children])
@@ -46,20 +44,20 @@ class UcbNode:
         self.n_sim += 1
         self.reward += reward
 
-        ds.append((self.state, reward))
+        ds[np.array2string(self.state)] = (self.state, reward)
 
         if self.parent is not None:
             self.parent.update_stats(ds, reward)
 
 
-class MCTS(gaming.PlayerPolicy):
+class ArcaneMCTS(gaming.PlayerPolicy):
     def __init__(self, game: gaming.Game, n_plays: int, player: int, max_depth=500):
         self.n_plays = n_plays
         self.max_depth = max_depth
         self.game = game
         self.player = player
         self.regressor = DecisionTreeRegressor()
-        self.ds = []
+        self.ds = {}
 
     def __call__(self, root_state):
         root = UcbNode(root_state, None, None)
@@ -72,7 +70,6 @@ class MCTS(gaming.PlayerPolicy):
                 current_node, current_state, reward, done = ssrd
 
                 current_node.update_stats(self.ds, reward)
-                self.update_regressor()
 
                 if done:
                     break
@@ -86,8 +83,10 @@ class MCTS(gaming.PlayerPolicy):
 
                         reward = reward * -1
                         current_node.update_stats(self.ds, reward)
-                        self.update_regressor()
                         if done:
+                            if reward < 0:
+                                # if we lose, update the heuristic
+                                self.update_regressor()
                             break
                 if done:
                     break
@@ -114,10 +113,11 @@ class MCTS(gaming.PlayerPolicy):
         return self.player
 
     def update_regressor(self):
-        # limit the size of the dataset to the last 1000
-        self.ds = self.ds[-1000:]
+        # limit the size of the dataset to the last 10000
+        ds = [tup for _, tup in self.ds.items()]
+        ds = ds[-10000:]
 
         # update the regressor
-        X = np.array([item[0] for item in self.ds]).reshape(len(self.ds), -1)
-        y = np.array([item[1] for item in self.ds])
+        X = np.array([item[0] for item in ds]).reshape(len(ds), -1)
+        y = np.array([item[1] for item in ds])
         self.regressor.fit(X, y)
